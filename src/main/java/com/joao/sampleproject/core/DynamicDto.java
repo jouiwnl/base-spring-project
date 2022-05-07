@@ -1,8 +1,8 @@
 package com.joao.sampleproject.core;
 
-import com.querydsl.core.types.dsl.StringPath;
 import org.apache.commons.beanutils.BeanUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -24,25 +24,25 @@ public class DynamicDto extends LinkedHashMap<String, Object> {
     }
 
     public static DynamicDto of(DatabaseEntity<?> entity) {
-        return of(entity, (StringPath) null);
+        return of(entity, (Field) null);
     }
 
-    public static DynamicDto of(DatabaseEntity<?> entity, StringPath descriptionPath) {
+    public static DynamicDto of(DatabaseEntity<?> entity, Field field) {
         if (entity == null) {
             return null;
         }
 
         return new DynamicDto()
                 .with("id", entity.getId())
-                .populateField(entity, descriptionPath);
+                .populateField(entity, field);
     }
 
-    public static DynamicDto of(DatabaseEntity<?> entity, StringPath... descriptionPathArray) {
+    public static DynamicDto of(DatabaseEntity<?> entity, Field[] fields) {
         if (entity == null) {
             return null;
         }
         final DynamicDto dto = new DynamicDto().with("id", entity.getId());
-        Arrays.stream(descriptionPathArray).forEach(path -> dto.populateField(entity, path));
+        Arrays.stream(fields).forEach(field -> dto.populateField(entity, field));
         return dto;
     }
 
@@ -51,9 +51,9 @@ public class DynamicDto extends LinkedHashMap<String, Object> {
         return this;
     }
 
-    private DynamicDto populateField(DatabaseEntity<?> entity, StringPath descriptionPath) {
+    private DynamicDto populateField(DatabaseEntity<?> entity, Field field) {
         try {
-            String fieldName = descriptionPath != null ? descriptionPath.getMetadata().getName() : DESCRIPTION_FIELD;
+            String fieldName = field != null ? field.getName() : DESCRIPTION_FIELD;
             String value = BeanUtils.getProperty(entity, fieldName);
             if (value != null) {
                 put(fieldName, value);
