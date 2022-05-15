@@ -3,6 +3,9 @@ package com.joao.sampleproject.core;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -12,13 +15,13 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class BasicRepository {
 
     private static final String FK_MESSAGE_DEFAULT = "Não é possível excluir este item, o mesmo está em uso em outro registro";
 
     private static final String POSTGRES_23503_RESTRICAO_INTEGRIDADE = "23503";
     private static final String ORACLE_23000_RESTRICAO_INTEGRIDADE = "23000";
-
 
     private EntityManager em;
 
